@@ -80,16 +80,21 @@ const putUser = async (req, res, next) => {
 //delete userSelect:
 
 const deleteUser = async (req, res, next) => {
-  //   try {
-  //     const id = req.params.id;
-  //     const resultDelete = await db.query(
-  //       `DELETE FROM clients WHERE id=$1 RETURNING *`,
-  //       [id]
-  //     );
-  //     res.send(resultDelete.rows[0]);
-  //   } catch (error) {
-  //     next(error);
-  //   }
+  try {
+    const id = req.params.id;
+    const resultDelete = await db.query(
+      `DELETE FROM users WHERE id=$1 RETURNING *`,
+      [id]
+    );
+    //res.send(resultDelete.rows[0]);
+    res.status(200).json({
+      status: "success deleted",
+      code: 200,
+      data: resultDelete.rows[0],
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 //post user:
 const postUser = async (req, res, next) => {

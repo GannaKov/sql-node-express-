@@ -16,7 +16,7 @@ usersRouter.get("/:id", checkUser, getUserById);
 
 usersRouter.put("/:id", checkUser, putUser);
 
-usersRouter.delete("/:id", deleteUser);
+usersRouter.delete("/:id", checkUser, deleteUser);
 
 usersRouter.post(
   "/",
