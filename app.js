@@ -1,5 +1,6 @@
 const express = require("express");
 const usersRouter = require("./routes/usersRouter");
+const ordersRouter = require("./routes/ordersRouter");
 //require('dotenv').config();
 const cors = require("cors");
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 //const path = require('path');
 
 app.use("/users", usersRouter);
+app.use("/orders", ordersRouter);
 
 app.use((err, req, res, next) => {
   if (err.status === 404) {
