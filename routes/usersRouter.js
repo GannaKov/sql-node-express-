@@ -6,6 +6,7 @@ const {
   deleteUser,
   postUser,
   checkUser,
+  getOrdersOfUser,
 } = require("../controllers/usersController");
 
 usersRouter = express.Router();
@@ -18,6 +19,9 @@ usersRouter.put("/:id", checkUser, putUser);
 
 usersRouter.delete("/:id", checkUser, deleteUser);
 
+////GET /:id/orders
+//get the orders of a user
+usersRouter.get("/:id/orders", checkUser, getOrdersOfUser);
 usersRouter.post(
   "/",
 

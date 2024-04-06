@@ -120,6 +120,26 @@ const postUser = async (req, res, next) => {
   }
 };
 
+// GET orders of user
+const getOrdersOfUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await db.query(`select * from orders where user_id=$1`, [
+      id,
+    ]);
+    if (result.rows.length === 0) {
+      throw { status: 404, message: `Orders of user ${id} not found` };
+    }
+    res.status(200).json({
+      status: "success",
+      code: 200,
+      data: result.rows,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -127,4 +147,5 @@ module.exports = {
   deleteUser,
   postUser,
   checkUser,
+  getOrdersOfUser,
 };
