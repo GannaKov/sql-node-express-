@@ -1,4 +1,6 @@
 const express = require("express");
+const { body } = require("express-validator");
+
 const {
   getAllOrders,
   getOrderById,
@@ -18,6 +20,12 @@ ordersRouter.put("/:id", checkOrder, putOrder);
 
 ordersRouter.delete("/:id", checkOrder, deleteOrder);
 
-ordersRouter.post("/", postOrder);
+ordersRouter.post(
+  "/",
+  body("price").notEmpty().trim(),
+  body("date").notEmpty().trim(),
+  body("user_id").notEmpty().trim(),
+  postOrder
+);
 
 module.exports = ordersRouter;

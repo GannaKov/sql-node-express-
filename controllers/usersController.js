@@ -1,4 +1,5 @@
 const db = require("../db/client");
+const { matchedData, validationResult } = require("express-validator");
 
 //checkUser;
 const checkUser = async (req, res, next) => {
@@ -8,7 +9,7 @@ const checkUser = async (req, res, next) => {
     if (!user.rows[0]) {
       throw { status: 404, message: "User not found" };
     }
-    // console.log(" user.rows[0]", user.rows[0]);
+
     req.user = user.rows[0];
     next();
   } catch (error) {
@@ -101,20 +102,42 @@ const deleteUser = async (req, res, next) => {
 //post user:
 const postUser = async (req, res, next) => {
   try {
-    const { first_name, last_name, age, active } = req.body;
-    if (!first_name || !last_name || !age) {
-      throw { status: 400, message: "Bad Request" };
-    } else {
+    //const { first_name, last_name, age, active } = req.body;
+    const validResult = validationResult(req);
+    if (validResult.isEmpty()) {
+      const { first_name, last_name, age, active } = matchedData(req);
       const resultPost = await db.query(
         "INSERT INTO users (first_name, last_name,age,active) VALUES ($1, $2,$3, $4)  RETURNING *",
         [first_name, last_name, age, active]
       );
       //return res.send(resultPost.rows[0]);
-      console.log(resultPost.rows[0]);
+
       res
         .status(201)
         .json({ status: "Created ", code: 201, data: resultPost.rows[0] });
+    } else {
+      throw {
+        status: 400,
+        message: `Bad Request: ${validResult.array()[0].path} is ${
+          validResult.array()[0].value === undefined ? "missing " : "empty"
+        }`,
+        errors: validResult.array(),
+      };
     }
+
+    // if (!first_name || !last_name || !age) {
+    //   throw { status: 400, message: "Bad Request" };
+    // } else {
+    //   const resultPost = await db.query(
+    //     "INSERT INTO users (first_name, last_name,age,active) VALUES ($1, $2,$3, $4)  RETURNING *",
+    //     [first_name, last_name, age, active]
+    //   );
+    //   //return res.send(resultPost.rows[0]);
+
+    //   res
+    //     .status(201)
+    //     .json({ status: "Created ", code: 201, data: resultPost.rows[0] });
+    // }
   } catch (error) {
     next(error);
   }

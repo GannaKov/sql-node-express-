@@ -1,4 +1,5 @@
 const db = require("../db/client");
+const { matchedData, validationResult } = require("express-validator");
 
 //checkOrder;
 const checkOrder = async (req, res, next) => {
@@ -8,7 +9,7 @@ const checkOrder = async (req, res, next) => {
     if (!order.rows[0]) {
       throw { status: 404, message: "Order not found" };
     }
-    // console.log(" user.rows[0]", user.rows[0]);
+
     req.order = order.rows[0];
     next();
   } catch (error) {
@@ -95,10 +96,10 @@ const deleteOrder = async (req, res, next) => {
 //post user:
 const postOrder = async (req, res, next) => {
   try {
-    const { price, date, user_id } = req.body;
-    if (!price || !date || !user_id) {
-      throw { status: 400, message: "Bad Request. Field missing." };
-    } else {
+    // const { price, date, user_id } = req.body;
+    const validResult = validationResult(req);
+    if (validResult.isEmpty()) {
+      const { price, date, user_id } = matchedData(req);
       const resultPost = await db.query(
         "INSERT INTO orders (price, date, user_id ) VALUES ($1, $2,$3)  RETURNING *",
         [price, date, user_id]
@@ -107,7 +108,28 @@ const postOrder = async (req, res, next) => {
       res
         .status(201)
         .json({ status: "Created ", code: 201, data: resultPost.rows[0] });
+    } else {
+      throw {
+        status: 400,
+        message: `Bad Request: ${validResult.array()[0].path} is ${
+          validResult.array()[0].value === undefined ? "missing " : "empty"
+        }`,
+        errors: validResult.array(),
+      };
     }
+
+    // if (!price || !date || !user_id) {
+    //   throw { status: 400, message: "Bad Request. Field missing." };
+    // } else {
+    //   const resultPost = await db.query(
+    //     "INSERT INTO orders (price, date, user_id ) VALUES ($1, $2,$3)  RETURNING *",
+    //     [price, date, user_id]
+    //   );
+
+    //   res
+    //     .status(201)
+    //     .json({ status: "Created ", code: 201, data: resultPost.rows[0] });
+    // }
   } catch (error) {
     next(error);
   }
