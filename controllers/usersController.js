@@ -30,11 +30,11 @@ const getAllUsers = async (req, res, next) => {
       code: 200,
       data: result.rows,
     });
-    // res.send(result.rows);
   } catch (error) {
     next(error);
   }
 };
+
 //by Id
 const getUserById = async (req, res, next) => {
   try {
@@ -45,6 +45,7 @@ const getUserById = async (req, res, next) => {
     next(error);
   }
 };
+
 //change user
 const putUser = async (req, res, next) => {
   try {
@@ -79,7 +80,6 @@ const putUser = async (req, res, next) => {
 };
 
 //delete userSelect:
-
 const deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -97,6 +97,7 @@ const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
 //post user:
 const postUser = async (req, res, next) => {
   try {
@@ -118,6 +119,7 @@ const postUser = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getAllUsers,
   getUserById,

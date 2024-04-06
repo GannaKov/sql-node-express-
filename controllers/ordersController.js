@@ -35,6 +35,7 @@ const getAllOrders = async (req, res, next) => {
     next(error);
   }
 };
+
 //by Id
 const getOrderById = async (req, res, next) => {
   try {
@@ -44,18 +45,16 @@ const getOrderById = async (req, res, next) => {
     next(error);
   }
 };
+
 //change user
 const putOrder = async (req, res, next) => {
   try {
     const id = req.params.id;
-    //price, date, user_id
+
     const priceOrder = req.body.price;
     const dateOrder = req.body.date;
     const user_idOrder = req.body.user_id;
 
-    // if (!firstName && !lastName) {
-    //   throw { status: 400, message: "Bad Request" };
-    // }
     const order = req.order;
     const newOrderPrice = priceOrder || order.price;
     const newOrderdate = dateOrder || order.date;
@@ -65,7 +64,9 @@ const putOrder = async (req, res, next) => {
   SET price = $1, date = $2, user_id=$3
   WHERE id=$4 RETURNING *`;
     const values = [newOrderPrice, newOrderdate, newOrderUser_id, id];
+
     const resultPut = await db.query(text, values);
+
     res.send(resultPut.rows[0]);
   } catch (error) {
     next(error);
@@ -73,7 +74,6 @@ const putOrder = async (req, res, next) => {
 };
 
 //delete userSelect:
-
 const deleteOrder = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -91,6 +91,7 @@ const deleteOrder = async (req, res, next) => {
     next(error);
   }
 };
+
 //post user:
 const postOrder = async (req, res, next) => {
   try {
@@ -102,8 +103,7 @@ const postOrder = async (req, res, next) => {
         "INSERT INTO orders (price, date, user_id ) VALUES ($1, $2,$3)  RETURNING *",
         [price, date, user_id]
       );
-      //return res.send(resultPost.rows[0]);
-      console.log(resultPost.rows[0]);
+
       res
         .status(201)
         .json({ status: "Created ", code: 201, data: resultPost.rows[0] });
@@ -112,6 +112,7 @@ const postOrder = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = {
   getAllOrders,
   getOrderById,
