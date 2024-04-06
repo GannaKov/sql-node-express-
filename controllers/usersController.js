@@ -46,7 +46,7 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-//change user
+//put change user
 const putUser = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -140,6 +140,32 @@ const getOrdersOfUser = async (req, res, next) => {
   }
 };
 
+//PUT /:id/check-inactive
+const changeStatusActiveUser = async (req, res, next) => {
+  const id = req.params.id;
+  const resultOrders = await db.query(`select * from orders where user_id=$1`, [
+    id,
+  ]);
+  let usersActiveStatus;
+  if (resultOrders.rows.length === 0) {
+    usersActiveStatus = false;
+  } else {
+    usersActiveStatus = true;
+  }
+
+  const result = await db.query(
+    `UPDATE users
+  SET active=${usersActiveStatus}
+  WHERE id=$1 RETURNING *`,
+    [id]
+  );
+  res.status(200).json({
+    status: "success updated status",
+    code: 200,
+    data: result.rows[0],
+  });
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -148,4 +174,5 @@ module.exports = {
   postUser,
   checkUser,
   getOrdersOfUser,
+  changeStatusActiveUser,
 };

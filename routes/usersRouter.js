@@ -7,6 +7,7 @@ const {
   postUser,
   checkUser,
   getOrdersOfUser,
+  changeStatusActiveUser,
 } = require("../controllers/usersController");
 
 usersRouter = express.Router();
@@ -22,10 +23,7 @@ usersRouter.delete("/:id", checkUser, deleteUser);
 ////GET /:id/orders
 //get the orders of a user
 usersRouter.get("/:id/orders", checkUser, getOrdersOfUser);
-usersRouter.post(
-  "/",
-
-  postUser
-);
+usersRouter.post("/", postUser);
+usersRouter.put("/:id/check-inactive", checkUser, changeStatusActiveUser);
 
 module.exports = usersRouter;
