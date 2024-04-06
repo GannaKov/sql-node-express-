@@ -47,28 +47,46 @@ const getOrderById = async (req, res, next) => {
   }
 };
 
-//change user
+//зге change user
 const putOrder = async (req, res, next) => {
   try {
     const id = req.params.id;
-
-    const priceOrder = req.body.price;
-    const dateOrder = req.body.date;
-    const user_idOrder = req.body.user_id;
-
     const order = req.order;
-    const newOrderPrice = priceOrder || order.price;
-    const newOrderdate = dateOrder || order.date;
-    const newOrderUser_id = user_idOrder || order.user_id;
+    const validResult = validationResult(req);
+    if (validResult.isEmpty()) {
+      const { price, date, user_id } = matchedData(req);
+      const newOrderPrice = price || order.price;
+      const newOrderdate = date || order.date;
+      const newOrderUser_id = user_id || order.user_id;
 
-    text = `UPDATE orders
+      text = `UPDATE orders
   SET price = $1, date = $2, user_id=$3
   WHERE id=$4 RETURNING *`;
-    const values = [newOrderPrice, newOrderdate, newOrderUser_id, id];
+      const values = [newOrderPrice, newOrderdate, newOrderUser_id, id];
 
-    const resultPut = await db.query(text, values);
+      const resultPut = await db.query(text, values);
 
-    res.send(resultPut.rows[0]);
+      res.send(resultPut.rows[0]);
+    } else {
+      throw {
+        status: 400,
+        message: `Bad Request: ${validResult.array()[0].path} is empty`,
+        errors: validResult.array(),
+      };
+    }
+
+    // const newOrderPrice = req.body.price || order.price;
+    // const newOrderdate = req.body.date || order.date;
+    // const newOrderUser_id = req.body.user_id || order.user_id;
+
+    //   text = `UPDATE orders
+    // SET price = $1, date = $2, user_id=$3
+    // WHERE id=$4 RETURNING *`;
+    //   const values = [newOrderPrice, newOrderdate, newOrderUser_id, id];
+
+    //   const resultPut = await db.query(text, values);
+
+    //   res.send(resultPut.rows[0]);
   } catch (error) {
     next(error);
   }

@@ -10,13 +10,18 @@ const {
   checkOrder,
 } = require("../controllers/ordersController");
 
+const updateOrderValidation = [
+  body("price").optional().notEmpty().trim(),
+  body("date").optional().notEmpty().trim(),
+  body("user_id").optional().notEmpty().trim(),
+];
 ordersRouter = express.Router();
 
 ordersRouter.get("/", getAllOrders);
 
 ordersRouter.get("/:id", checkOrder, getOrderById);
 
-ordersRouter.put("/:id", checkOrder, putOrder);
+ordersRouter.put("/:id", updateOrderValidation, checkOrder, putOrder);
 
 ordersRouter.delete("/:id", checkOrder, deleteOrder);
 
